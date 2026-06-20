@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { groupService } from '../services/api';
-import Card from '../components/Card';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
 import Modal from '../components/Modal';

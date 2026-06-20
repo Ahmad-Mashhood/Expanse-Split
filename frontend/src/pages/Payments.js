@@ -3,8 +3,7 @@ import { paymentService } from '../services/api';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import Alert from '../components/Alert';
-import Navbar from '../components/Navbar';
-import { FiCheck, FiClock } from 'react-icons/fi';
+import { FiCheck } from 'react-icons/fi';
 
 const Payments = () => {
   const [pendingPayments, setPendingPayments] = useState([]);
@@ -59,7 +58,9 @@ const Payments = () => {
 
         <Card>
           <h2 className="text-2xl font-bold mb-6">Pending Payments</h2>
-          {pendingPayments.length === 0 ? (
+          {loading ? (
+            <p className="text-gray-600">Loading payments...</p>
+          ) : pendingPayments.length === 0 ? (
             <p className="text-gray-600">No pending payments</p>
           ) : (
             <div className="space-y-4">

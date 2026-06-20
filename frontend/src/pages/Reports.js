@@ -14,6 +14,21 @@ const Reports = () => {
   const [chartData, setChartData] = useState([]);
   const [alert, setAlert] = useState(null);
 
+  const handleGroupChange = useCallback(async (groupId, groupsList) => {
+    if (!groupsList) return;
+    const group = groupsList.find(g => g._id === groupId);
+    if (!group) return;
+    setSelectedGroup(group);
+    
+    try {
+      const response = await expenseService.getExpenses(groupId);
+      setGroupExpenses(response.data.expenses || []);
+    } catch (error) {
+      console.error("Failed to fetch expenses for report", error);
+      setGroupExpenses([]);
+    }
+  }, []);
+
   const fetchGroups = useCallback(async () => {
     try {
       const response = await groupService.getGroups();
@@ -28,24 +43,11 @@ const Reports = () => {
         message: 'Failed to load groups'
       });
     }
-  }, []);
+  }, [handleGroupChange]);
 
   useEffect(() => {
     fetchGroups();
   }, [fetchGroups]);
-
-  const handleGroupChange = async (groupId, groupsList = groups) => {
-    const group = groupsList.find(g => g._id === groupId);
-    setSelectedGroup(group);
-    
-    try {
-      const response = await expenseService.getExpenses(groupId);
-      setGroupExpenses(response.data.expenses || []);
-    } catch (error) {
-      console.error("Failed to fetch expenses for report", error);
-      setGroupExpenses([]);
-    }
-  };
 
   const generateChartData = useCallback(() => {
     if (!groupExpenses || groupExpenses.length === 0) return [];
@@ -124,7 +126,7 @@ const Reports = () => {
             <label className="block text-gray-700 font-semibold mb-2">Select Group</label>
             <select
               value={selectedGroup?._id || ''}
-              onChange={(e) => handleGroupChange(e.target.value)}
+              onChange={(e) => handleGroupChange(e.target.value, groups)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
             >
               {groups.map(group => (
